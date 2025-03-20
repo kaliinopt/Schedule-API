@@ -17,3 +17,5 @@ def get_schedule_for_one_class(db: Session = Depends(get_db)):
     pass
 
 @app.post("/schedule")
+def create_schedule(db: Session = Depends(get_db)):
+    pass

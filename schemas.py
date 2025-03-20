@@ -8,7 +8,7 @@ class ScheduleBase(BaseModel):
     start_time: time
     end_time: time
     date_of: date
-    repeat_frequency: Optional[str]
+    repeat_frequency: Optional[str] = None
     repeat_until: Optional[date] = None
 
 class ScheduleResponse(ScheduleBase):
