@@ -1,134 +1,61 @@
 from sqlalchemy import Column, Integer, String, Time, Date
+from sqlalchemy.sql.sqltypes import TIMESTAMP
+from sqlalchemy.sql.expression import text
 from database import Base
 
-class Class_142(Base):
+class User(Base):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True, nullable=False)
+    username = Column(String, nullable=False, unique=True)
+    password = Column(String, nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True), 
+                        nullable=False, server_default=text('now()'))
+
+# Базовый класс для всех аудиторий
+class BaseClassRoom(Base):
+    __abstract__ = True  # Указываем, что это абстрактный класс 
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    subject = Column(String, nullable=False)
+    teacher = Column(String, nullable=False)
+    start_time = Column(Time, nullable=False)
+    end_time = Column(Time, nullable=False)
+    date = Column(Date)
+    repeat_frequency = Column(String(50), nullable=True)
+    repeat_until = Column(Date, nullable=True)
+
+# Конкретные классы для каждой аудитории
+class Class_142(BaseClassRoom):
     __tablename__ = 'class_142'
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    subject = Column(String, nullable=False)
-    teacher = Column(String, nullable=False)
-    start_time = Column(Time, nullable=False)
-    end_time = Column(Time, nullable=False)
-    date = Column(Date)
-    repeat_frequency = Column(String(50), nullable=True)
-    repeat_until = Column(Date, nullable=True)   
 
-class Class_143(Base):
+class Class_143(BaseClassRoom):
     __tablename__ = 'class_143'
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    subject = Column(String, nullable=False)
-    teacher = Column(String, nullable=False)
-    start_time = Column(Time, nullable=False)
-    end_time = Column(Time, nullable=False)
-    date = Column(Date)
-    repeat_frequency = Column(String(50), nullable=True)
-    repeat_until = Column(Date, nullable=True)     
 
-class Class_251(Base):
+class Class_251(BaseClassRoom):
     __tablename__ = 'class_251'
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    subject = Column(String, nullable=False)
-    teacher = Column(String, nullable=False)
-    start_time = Column(Time, nullable=False)
-    end_time = Column(Time, nullable=False)
-    date = Column(Date)
-    repeat_frequency = Column(String(50), nullable=True)
-    repeat_until = Column(Date, nullable=True)    
 
-class Class_252(Base):
+class Class_252(BaseClassRoom):
     __tablename__ = 'class_252'
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    subject = Column(String, nullable=False)
-    teacher = Column(String, nullable=False)
-    start_time = Column(Time, nullable=False)
-    end_time = Column(Time, nullable=False)
-    date = Column(Date)
-    repeat_frequency = Column(String(50), nullable=True)
-    repeat_until = Column(Date, nullable=True)   
 
-class Class_253(Base):
+class Class_253(BaseClassRoom):
     __tablename__ = 'class_253'
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    subject = Column(String, nullable=False)
-    teacher = Column(String, nullable=False)
-    start_time = Column(Time, nullable=False)
-    end_time = Column(Time, nullable=False)
-    date = Column(Date)
-    repeat_frequency = Column(String(50), nullable=True)
-    repeat_until = Column(Date, nullable=True)    
 
-class Class_254(Base):
+class Class_254(BaseClassRoom):
     __tablename__ = 'class_254'
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    subject = Column(String, nullable=False)
-    teacher = Column(String, nullable=False)
-    start_time = Column(Time, nullable=False)
-    end_time = Column(Time, nullable=False)
-    date = Column(Date)
-    repeat_frequency = Column(String(50), nullable=True)
-    repeat_until = Column(Date, nullable=True)    
 
-class Class_255(Base):
+class Class_255(BaseClassRoom):
     __tablename__ = 'class_255'
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    subject = Column(String, nullable=False)
-    teacher = Column(String, nullable=False)
-    start_time = Column(Time, nullable=False)
-    end_time = Column(Time, nullable=False)
-    date = Column(Date)
-    repeat_frequency = Column(String(50), nullable=True)
-    repeat_until = Column(Date, nullable=True)   
 
-class Class_339(Base):
+class Class_339(BaseClassRoom):
     __tablename__ = 'class_339'
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    subject = Column(String, nullable=False)
-    teacher = Column(String, nullable=False)
-    start_time = Column(Time, nullable=False)
-    end_time = Column(Time, nullable=False)
-    date = Column(Date)
-    repeat_frequency = Column(String(50), nullable=True)
-    repeat_until = Column(Date, nullable=True)     
 
-class Class_340(Base):
+class Class_340(BaseClassRoom):
     __tablename__ = 'class_340'
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    subject = Column(String, nullable=False)
-    teacher = Column(String, nullable=False)
-    start_time = Column(Time, nullable=False)
-    end_time = Column(Time, nullable=False)
-    date = Column(Date)
-    repeat_frequency = Column(String(50), nullable=True)
-    repeat_until = Column(Date, nullable=True)     
 
-class Class_341(Base):
+class Class_341(BaseClassRoom):
     __tablename__ = 'class_341'
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    subject = Column(String, nullable=False)
-    teacher = Column(String, nullable=False)
-    start_time = Column(Time, nullable=False)
-    end_time = Column(Time, nullable=False)
-    date = Column(Date)
-    repeat_frequency = Column(String(50), nullable=True)
-    repeat_until = Column(Date, nullable=True)    
 
-class Class_342(Base):
+class Class_342(BaseClassRoom):
     __tablename__ = 'class_342'
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    subject = Column(String, nullable=False)
-    teacher = Column(String, nullable=False)
-    start_time = Column(Time, nullable=False)
-    end_time = Column(Time, nullable=False)
-    date = Column(Date)
-    repeat_frequency = Column(String(50), nullable=True)
-    repeat_until = Column(Date, nullable=True)   
 
-class Class_343(Base):
+class Class_343(BaseClassRoom):
     __tablename__ = 'class_343'
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    subject = Column(String, nullable=False)
-    teacher = Column(String, nullable=False)
-    start_time = Column(Time, nullable=False)
-    end_time = Column(Time, nullable=False)
-    date = Column(Date)
-    repeat_frequency = Column(String(50), nullable=True)
-    repeat_until = Column(Date, nullable=True)    
