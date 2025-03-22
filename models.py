@@ -8,6 +8,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     username = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False)
+    role = Column(String, nullable=False, default="user")
     created_at = Column(TIMESTAMP(timezone=True), 
                         nullable=False, server_default=text('now()'))
 
