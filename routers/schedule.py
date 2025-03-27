@@ -25,16 +25,13 @@ async def get_schedule_for_one_class(
 @router.post("/")
 async def create_schedule(
     db: AsyncSession = Depends(get_db), 
-    current_user: models.User = Depends(oath2.require_role("admin"))):
+    admin: models.User = Depends(oath2.require_role("admin"))):
     pass
 
 @router.put("/")
 async def create_schedule(
     db: AsyncSession = Depends(get_db), 
-    current_user: models.User = Depends(oath2.require_role("admin"))):
-    
-    
-    
+    admin: models.User = Depends(oath2.require_role("admin"))):
     
     pass
 
