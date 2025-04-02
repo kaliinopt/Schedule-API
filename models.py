@@ -20,7 +20,7 @@ class BaseClassRoom(Base):
     teacher = Column(String, nullable=False)
     start_time = Column(Time, nullable=False)
     end_time = Column(Time, nullable=False)
-    date = Column(Date)
+    date = Column(Date, nullable=False)
     repeat_frequency = Column(String(50), nullable=True)
     repeat_until = Column(Date, nullable=True)
 

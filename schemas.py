@@ -6,20 +6,23 @@ class UserBase(BaseModel):
     username: str
     password: str
 
-class ScheduleBase(BaseModel):
-    subject: str
+class ScheduleBase(BaseModel): 
+    subject: str    
     teacher: str
     start_time: time
     end_time: time
-    date_of: date
     repeat_frequency: Optional[str] = None
     repeat_until: Optional[date] = None
 
 class ScheduleResponse(ScheduleBase):
+    date: date 
+    
+    class Config:
+        from_attributes = True
     pass
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserLogin(UserBase):
     pass

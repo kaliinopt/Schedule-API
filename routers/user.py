@@ -52,9 +52,7 @@ async def create_admin(
 
     admin.password = hashed_password
 
-    new_user = models.User(**admin.model_dump(),
-                           role="admin"
-                           )
+    new_user = models.User(**admin.model_dump(), role="admin")
     
     db.add(new_user)
     await db.commit()
