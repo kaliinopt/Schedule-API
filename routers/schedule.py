@@ -1,5 +1,6 @@
 import models, schemas, oath2
-from fastapi import Response, status, HTTPException, Depends, APIRouter
+from utils import check_time_conflicts
+from fastapi import status, HTTPException, Depends, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_, or_
 from database import get_db
@@ -146,21 +147,63 @@ async def get_week_schedule(
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.ScheduleResponse)
 async def create_schedule(
+    schedule: schemas.ScheduleCreate,
     db: AsyncSession = Depends(get_db), 
     admin: models.User = Depends(oath2.require_role("admin"))):
-    pass
-
-@router.put("/", status_code=status.HTTP_204_NO_CONTENT)
-async def create_schedule(
-    db: AsyncSession = Depends(get_db), 
-    admin: models.User = Depends(oath2.require_role("admin"))):
+    model = audience_models.get(schedule.audience_id)
+    if not model:
+        raise HTTPException(status_code=404, detail='Аудитория не найдена')
     
-    pass
+    await check_time_conflicts(db, model, schedule)
 
-@router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
-async def create_schedule(
+    schedule_db = model(**schedule.model_dump(exclude={"audience_id"}))
+    db.add(schedule_db)
+    await db.commit()
+    await db.refresh(schedule_db)
+    return schedule_db
+
+@router.put("/{audience_id}/{id}", response_model=schemas.ScheduleResponse)
+async def update_schedule(
+    audience_id: int,
+    id: int,
+    update_schedule: schemas.ScheduleUpdate,
     db: AsyncSession = Depends(get_db), 
     admin: models.User = Depends(oath2.require_role("admin"))):
+    model = audience_models.get(audience_id)
+    if not model:
+        raise HTTPException(status_code=404, detail='Аудитория не найдена')
     
-    pass
+    event = await db.get(model, id)
+    if not event:
+        raise HTTPException(status_code=404, detail="Событие не найдено")
+    
+    if any(field in update_schedule.model_dump(exclude_unset=True) 
+        for field in ["start_time", "end_time", "date"]):
+            await check_time_conflicts(db, model, update_schedule)
+    
+    for field, value in update_schedule.model_dump(exclude_unset=True).items():
+        setattr(event, field, value)
+    
+    await db.commit()
+    await db.refresh(event)
+    return event
 
+@router.delete("/{audience_id}/{id}")
+async def delete_schedule(
+    audience_id: int,
+    id: int,
+    db: AsyncSession = Depends(get_db), 
+    admin: models.User = Depends(oath2.require_role("admin"))):
+
+    model = audience_models.get(audience_id)
+    if not model:
+        raise HTTPException(status_code=404, detail='Аудитория не найдена')
+    
+    event = await db.get(model, id)
+
+    if not event:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Событие не найдено")
+    
+    await db.delete(event)
+    await db.commit()
+    return {"message": "Успешно удалено"}
