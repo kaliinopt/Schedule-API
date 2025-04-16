@@ -1,9 +1,9 @@
-import models, schemas, oath2
-from utils import check_time_conflicts
+from .. import models, schemas, oath2
+from ..utils import check_time_conflicts
 from fastapi import status, HTTPException, Depends, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_, or_
-from database import get_db
+from ..database import get_db
 from typing import List
 from datetime import date, timedelta
 from typing import Optional
@@ -29,22 +29,21 @@ router = APIRouter(
     tags=["Schedule"]
 )
 # Input should be a valid date in format YYYY-MM-DD
-@router.get("/{audience_id}/{date_of}", response_model=List[schemas.ScheduleResponse])
+@router.get("/{audience_id}/{date}", response_model=List[schemas.ScheduleResponse])
 async def get_schedule_for_date(
     audience_id: int, 
-    date_of: date,
-    db: AsyncSession = Depends(get_db)
-):
+    date: date,
+    db: AsyncSession = Depends(get_db)):
+
     model = audience_models.get(audience_id)
     if not model:
         raise HTTPException(status_code=404, detail='Аудитория не найдена')
     
     schedule = await db.execute(
-        select(model).where(model.date == date_of)
+        select(model).where(model.date == date)
     )
     
     return schedule.scalars().all()
-
 
 # Input should be a valid date in format YYYY-MM-DD
 def get_next_occurrence(
@@ -83,6 +82,7 @@ def get_next_occurrence(
     
     return None
 
+#Получение расписания на неделю 
 @router.get("/{audience_id}/week/{start_date}", response_model=List[schemas.ScheduleResponse])
 async def get_week_schedule(
     audience_id: int,

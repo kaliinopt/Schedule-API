@@ -1,8 +1,8 @@
 from passlib.context import CryptContext
-from schemas import ScheduleCreate
+from .schemas import ScheduleCreate
 from typing import Type
 from sqlalchemy.ext.asyncio import AsyncSession 
-from models import BaseClassRoom
+from .models import BaseClassRoom
 from fastapi import status, HTTPException
 from sqlalchemy import select, and_, or_
 

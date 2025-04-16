@@ -1,13 +1,13 @@
 from jose import JWTError, jwt
 import tracemalloc
 from datetime import datetime, timedelta, timezone
-import schemas, models
+from . import schemas, models
 from fastapi import Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from database import get_db
-from config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+from .database import get_db
+from .config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
 # Включаем tracemalloc для отслеживания выделения памяти
 tracemalloc.start()
