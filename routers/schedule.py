@@ -1,12 +1,11 @@
 from .. import models, schemas, oath2
-from ..utils import check_time_conflicts
+from ..utils import check_time_conflicts, get_next_occurrence
 from fastapi import status, HTTPException, Depends, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_, or_
 from ..database import get_db
 from typing import List
 from datetime import date, timedelta
-from typing import Optional
 
 audience_models = {
             142: models.Class_142, 
@@ -22,7 +21,6 @@ audience_models = {
             342: models.Class_342, 
             343: models.Class_343
         }
-
 
 router = APIRouter(
     prefix="/api/schedule",
@@ -44,43 +42,6 @@ async def get_schedule_for_date(
     )
     
     return schedule.scalars().all()
-
-# Input should be a valid date in format YYYY-MM-DD
-def get_next_occurrence(
-    event_date: date,
-    repeat_frequency: Optional[str],
-    repeat_until: Optional[date],
-    week_start: date,
-    week_end: date
-) -> Optional[date]:
-    """Вычисляет следующую дату события в пределах запрашиваемой недели"""
-    if not repeat_frequency:
-        return None
-    
-    current_date = event_date
-    while current_date <= week_end:
-        if current_date >= week_start:
-            if not repeat_until or current_date <= repeat_until:
-                return current_date
-        
-        # Вычисляем следующую дату в зависимости от частоты
-        if repeat_frequency == "daily":
-            current_date += timedelta(days=1)
-        elif repeat_frequency == "weekly":
-            current_date += timedelta(weeks=1)
-        elif repeat_frequency == "secondweek":
-            current_date += timedelta(weeks=2)
-        elif repeat_frequency == "monthly":
-            year = current_date.year + (current_date.month == 12)
-            month = current_date.month + 1 if current_date.month < 12 else 1
-            try:
-                current_date = current_date.replace(year=year, month=month)
-            except ValueError:
-                current_date = current_date.replace(year=year, month=month, day=28)
-        else:
-            break
-    
-    return None
 
 #Получение расписания на неделю 
 @router.get("/{audience_id}/week/{start_date}", response_model=List[schemas.ScheduleResponse])
