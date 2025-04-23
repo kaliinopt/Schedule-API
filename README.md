@@ -29,16 +29,24 @@ API: http://localhost:8000
 
 Документация: http://localhost:8000/docs
 
-Альтернативная docs: http://localhost:8000/redoc
+Альтернативная docs: http://localhost:8000/redoc 
 
 Установите зависимости:
 
 pip install -r requirements.txt
 
+Создайте файл config.py и добавьте
+SECRET_KEY = your-secret-key
+ALGORITHM = HS256
+ACCESS_TOKEN_EXPIRE_MINUTES = your-expire
+DATABASE_PASSWORD = your-password
+DATABASE_LOGIN = your-login
+POSTGRES_SERVER = your-ip
+POSTGRES_PORT = your-port
+
 Запустите сервер:
 
 uvicorn app.main:app --reload
-
 
 📚 Документация API
 Все эндпоинты доступны через Swagger UI:
@@ -46,9 +54,9 @@ GET /docs
 
 Основные роуты:
 
-POST /api/auth/login - Получение JWT-токена
+POST /login - Получение JWT-токена
 
-GET /api/schedule/{audience_id}/{date} - Получить расписание на дату
+GET /api/schedule/{audience_id}/week/{start_date} - Получить расписание на неделю вперед
 
 POST /api/schedule - Создать новое событие (требуются права админа)
 
@@ -64,31 +72,8 @@ PUT /api/schedule/{audience_id}/{id} - Обновить событие (треб
 Пример запроса для получения токена:
 
 json
-POST /api/auth/login
+POST /login
 {
   "username": "admin",
   "password": "secret"
 }
-
-config.py файл
-DEBUG=True
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_SERVER=db
-POSTGRES_DB=schedule_db
-SECRET_KEY=your-secret-key
-🤝 Как внести вклад
-Форкните репозиторий
-
-Создайте ветку для вашей фичи (git checkout -b feature/amazing-feature)
-
-Сделайте коммит изменений (git commit -m 'Add some amazing feature')
-
-Запушьте ветку (git push origin feature/amazing-feature)
-
-Откройте Pull Request
-
-📄 Лицензия
-MIT
-
-### Советы по адаптации:
