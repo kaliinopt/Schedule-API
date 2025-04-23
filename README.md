@@ -109,6 +109,7 @@ POST /api/schedule
 }
 ```
 repeat_until - Дата (до какого числа повторение)
+
 repeat_frequency - Частота повторений: daily, weekly, secondweek, monthly
 
 ### Создание пользователя
