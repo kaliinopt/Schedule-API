@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Time, Date
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy.sql.expression import text
-from .database import Base
+from database import Base
 
 class User(Base):
     __tablename__ = 'users'
@@ -24,7 +24,7 @@ class BaseClassRoom(Base):
     repeat_frequency = Column(String(50), nullable=True)
     repeat_until = Column(Date, nullable=True)
 
-# Конкретные классы для каждой аудитории
+# Конкретные классы для каждой аудитории, аудитории не меняются
 class Class_142(BaseClassRoom):
     __tablename__ = 'class_142'
 

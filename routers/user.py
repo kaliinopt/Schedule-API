@@ -1,7 +1,7 @@
-from .. import models, schemas, oath2, utils
+import models, schemas, oath2, utils
 from fastapi import status, HTTPException, Depends, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
-from ..database import get_db
+from database import get_db
 from sqlalchemy import select
 
 
@@ -9,7 +9,7 @@ router = APIRouter(
     prefix="/users",
     tags=["Users"]
 )
-
+#Создание обычного пользователя, права есть только на просмотр
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
 async def create_user(user: schemas.UserCreate, db: AsyncSession = Depends(get_db)):
     
@@ -35,6 +35,7 @@ async def create_user(user: schemas.UserCreate, db: AsyncSession = Depends(get_d
 
     return new_user
 
+#Создание новых админов
 @router.post("/admin", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
 async def create_admin(
     admin: schemas.UserCreate, 
@@ -60,6 +61,7 @@ async def create_admin(
 
     return new_user
 
+#Получение пользователя по id
 @router.get('/{id}', response_model=schemas.UserOut)
 async def get_user(id: int, db: AsyncSession = Depends(get_db)):
 

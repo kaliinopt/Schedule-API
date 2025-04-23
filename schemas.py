@@ -16,7 +16,6 @@ class ScheduleBase(BaseModel):
     repeat_frequency: Optional[str] = None
     repeat_until: Optional[date] = None
 
-
 class ScheduleResponse(ScheduleBase):
     id: int
     date: date 

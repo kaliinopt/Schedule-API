@@ -1,41 +1,31 @@
-from .. import models, schemas, oath2
-from ..utils import check_time_conflicts, get_next_occurrence
+import models, schemas, oath2
+from utils import check_time_conflicts, get_next_occurrence_by_week
 from fastapi import status, HTTPException, Depends, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_, or_
-from ..database import get_db
-from typing import List
+from database import get_db
+from typing import List, Type
 from datetime import date, timedelta
+from config import audience_models
 
-audience_models = {
-            142: models.Class_142, 
-            143: models.Class_143, 
-            251: models.Class_251, 
-            252: models.Class_252, 
-            253: models.Class_253, 
-            254: models.Class_254, 
-            255: models.Class_255, 
-            339: models.Class_339, 
-            340: models.Class_340, 
-            341: models.Class_341, 
-            342: models.Class_342, 
-            343: models.Class_343
-        }
 
 router = APIRouter(
     prefix="/api/schedule",
     tags=["Schedule"]
 )
-# Input should be a valid date in format YYYY-MM-DD
-@router.get("/{audience_id}/{date}", response_model=List[schemas.ScheduleResponse])
-async def get_schedule_for_date(
-    audience_id: int, 
-    date: date,
-    db: AsyncSession = Depends(get_db)):
 
+async def get_audience_model(audience_id: int):
     model = audience_models.get(audience_id)
     if not model:
-        raise HTTPException(status_code=404, detail='Аудитория не найдена')
+        raise HTTPException(status_code=404, detail="Аудитория не найдена")
+    return model
+
+# Получение расписания на день, удалю если не понадобиться, 
+@router.get("/{audience_id}/{date}", response_model=List[schemas.ScheduleResponse])
+async def get_schedule_for_date(
+    date: date,
+    model: Type[models.BaseClassRoom] = Depends(get_audience_model),
+    db: AsyncSession = Depends(get_db)):
     
     schedule = await db.execute(
         select(model).where(model.date == date)
@@ -46,13 +36,9 @@ async def get_schedule_for_date(
 #Получение расписания на неделю 
 @router.get("/{audience_id}/week/{start_date}", response_model=List[schemas.ScheduleResponse])
 async def get_week_schedule(
-    audience_id: int,
     start_date: date,
-    db: AsyncSession = Depends(get_db)
-):
-    model = audience_models.get(audience_id)
-    if not model:
-        raise HTTPException(status_code=404, detail='Аудитория не найдена')
+    model: Type[models.BaseClassRoom] = Depends(get_audience_model),
+    db: AsyncSession = Depends(get_db)):
 
     end_date = start_date + timedelta(days=6)
     
@@ -84,7 +70,7 @@ async def get_week_schedule(
     response = []
     for event in events:
         if event.repeat_frequency:
-            next_date = get_next_occurrence(
+            next_date = get_next_occurrence_by_week(
                 event_date=event.date,
                 repeat_frequency=event.repeat_frequency,
                 repeat_until=event.repeat_until,
@@ -111,9 +97,11 @@ async def create_schedule(
     schedule: schemas.ScheduleCreate,
     db: AsyncSession = Depends(get_db), 
     admin: models.User = Depends(oath2.require_role("admin"))):
+
     model = audience_models.get(schedule.audience_id)
     if not model:
-        raise HTTPException(status_code=404, detail='Аудитория не найдена')
+        raise HTTPException(status_code=404, detail="Аудитория не найдена")
+
     
     await check_time_conflicts(db, model, schedule)
 
@@ -125,14 +113,11 @@ async def create_schedule(
 
 @router.put("/{audience_id}/{id}", response_model=schemas.ScheduleResponse)
 async def update_schedule(
-    audience_id: int,
     id: int,
     update_schedule: schemas.ScheduleUpdate,
+    model: Type[models.BaseClassRoom] = Depends(get_audience_model),
     db: AsyncSession = Depends(get_db), 
     admin: models.User = Depends(oath2.require_role("admin"))):
-    model = audience_models.get(audience_id)
-    if not model:
-        raise HTTPException(status_code=404, detail='Аудитория не найдена')
     
     event = await db.get(model, id)
     if not event:
@@ -140,7 +125,7 @@ async def update_schedule(
     
     if any(field in update_schedule.model_dump(exclude_unset=True) 
         for field in ["start_time", "end_time", "date"]):
-            await check_time_conflicts(db, model, update_schedule)
+            await check_time_conflicts(db, model, update_schedule, exclude_event_id=id)
     
     for field, value in update_schedule.model_dump(exclude_unset=True).items():
         setattr(event, field, value)
@@ -151,14 +136,10 @@ async def update_schedule(
 
 @router.delete("/{audience_id}/{id}")
 async def delete_schedule(
-    audience_id: int,
     id: int,
+    model: Type[models.BaseClassRoom] = Depends(get_audience_model),
     db: AsyncSession = Depends(get_db), 
     admin: models.User = Depends(oath2.require_role("admin"))):
-
-    model = audience_models.get(audience_id)
-    if not model:
-        raise HTTPException(status_code=404, detail='Аудитория не найдена')
     
     event = await db.get(model, id)
 
@@ -168,3 +149,5 @@ async def delete_schedule(
     await db.delete(event)
     await db.commit()
     return {"message": "Успешно удалено"}
+
+#TODO Написать дополнительные проверки
