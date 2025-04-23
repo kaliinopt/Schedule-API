@@ -102,12 +102,15 @@ POST /api/schedule
     "teacher": "Иванов И. И.",
     "start_time": "20:00:00",
     "end_time": "22:00:00",
-    "repeat_frequency": null, //Частота повторений: daily, weekly, secondweek, monthly
-    "repeat_until": null, //Дата (до какого числа повторение)
+    "repeat_frequency": null, 
+    "repeat_until": null, 
     "id": 15,
     "date": "2025-08-09"
 }
 ```
+repeat_until - Дата (до какого числа повторение)
+repeat_frequency - Частота повторений: daily, weekly, secondweek, monthly
+
 ### Создание пользователя
 POST /users
 ```json
