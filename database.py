@@ -1,12 +1,14 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy import create_engine
+from config import LOGIN_DATABASE, PASSWORD_DATABASE
+
 
 Base = declarative_base()
 
-SQLALCHEMY_DATABASE_URL_SYNC = 'postgresql://postgres:genby,ehu4@192.168.201.20:5432/postgres'
+SQLALCHEMY_DATABASE_URL_SYNC = f'postgresql://{LOGIN_DATABASE}:{PASSWORD_DATABASE}@192.168.201.20:5432/postgres'
 
-SQLALCHEMY_DATABASE_URL = 'postgresql+asyncpg://postgres:genby,ehu4@192.168.201.20:5432/postgres'
+SQLALCHEMY_DATABASE_URL = f'postgresql+asyncpg://{LOGIN_DATABASE}:{PASSWORD_DATABASE}@192.168.201.20:5432/postgres'
 
 sync_engine = create_engine(SQLALCHEMY_DATABASE_URL_SYNC)
 
