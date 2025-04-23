@@ -6,8 +6,22 @@ from sqlalchemy import select, and_, or_
 from database import get_db
 from typing import List, Type
 from datetime import date, timedelta
-from config import audience_models
 
+#Захардкодил по причине неизменности
+audience_models = {
+            142: models.Class_142, 
+            143: models.Class_143, 
+            251: models.Class_251, 
+            252: models.Class_252, 
+            253: models.Class_253, 
+            254: models.Class_254, 
+            255: models.Class_255, 
+            339: models.Class_339, 
+            340: models.Class_340, 
+            341: models.Class_341, 
+            342: models.Class_342, 
+            343: models.Class_343
+        }
 
 router = APIRouter(
     prefix="/api/schedule",

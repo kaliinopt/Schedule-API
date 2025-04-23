@@ -4,9 +4,9 @@ from sqlalchemy import create_engine
 
 Base = declarative_base()
 
-SQLALCHEMY_DATABASE_URL_SYNC = 'postgresql://postgres:genby,ehu4@192.168.201.20:5432/postgres'
+SQLALCHEMY_DATABASE_URL_SYNC = 'postgresql://{DATABASE_LOGIN}:{DATABASE_PASSWORD}@192.168.201.20:5432/{DATABASE_LOGIN}'
 
-SQLALCHEMY_DATABASE_URL = 'postgresql+asyncpg://postgres:genby,ehu4@192.168.201.20:5432/postgres'
+SQLALCHEMY_DATABASE_URL = 'postgresql+asyncpg://{DATABASE_LOGIN}:{DATABASE_PASSWORD}@192.168.201.20:5432/{DATABASE_LOGIN}'
 
 sync_engine = create_engine(SQLALCHEMY_DATABASE_URL_SYNC)
 
