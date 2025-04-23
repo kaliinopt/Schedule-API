@@ -7,6 +7,7 @@ models.Base.metadata.create_all(bind=sync_engine)
 
 app = FastAPI()
 
+
 #Проверка статуса
 @app.get("/")
 async def root():
