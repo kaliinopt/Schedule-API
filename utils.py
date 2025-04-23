@@ -8,7 +8,6 @@ from sqlalchemy import select, and_, or_
 from typing import Optional, Tuple, List
 from datetime import date, timedelta, time
 
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated='auto')
 
 #Делает хеш
