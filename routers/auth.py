@@ -21,6 +21,5 @@ async def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Asy
 
     access_token = oath2.create_access_token(data = {"username": user.username})
 
-
     return {"access_token": access_token, 
             "token_type": "bearer"}
