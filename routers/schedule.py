@@ -164,4 +164,3 @@ async def delete_schedule(
     await db.commit()
     return {"message": "Успешно удалено"}
 
-#TODO Написать дополнительные проверки
