@@ -60,3 +60,4 @@ class Class_342(BaseClassRoom):
 
 class Class_343(BaseClassRoom):
     __tablename__ = 'class_343'
+    
