@@ -9,7 +9,7 @@ router = APIRouter(
     prefix="/users",
     tags=["Users"]
 )
-#Создание обычного пользователя, права есть только на просмотр
+#Создание обычного пользователя, права есть только на просмотр, выпилю если не надо будет
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
 async def create_user(user: schemas.UserCreate, db: AsyncSession = Depends(get_db)):
     
