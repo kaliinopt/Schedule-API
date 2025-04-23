@@ -95,30 +95,30 @@ POST /users - Создать обычного пользователя
 
 ## 🗃️ Примеры запросов
 ### Создание события
-```json
 POST /api/schedule
+```json
 {
     "subject": "Математика",
     "teacher": "Иванов И. И.",
     "start_time": "20:00:00",
     "end_time": "22:00:00",
-    "repeat_frequency": null, #Частота повторений: daily, weekly, secondweek, monthly
-    "repeat_until": null, #Дата (до какого числа повторение)
+    "repeat_frequency": null, //Частота повторений: daily, weekly, secondweek, monthly
+    "repeat_until": null, //Дата (до какого числа повторение)
     "id": 15,
     "date": "2025-08-09"
 }
 ```
 ### Создание пользователя
-```json
 POST /users
+```json
 {
   "username": "new_user",
   "password": "user123",
 }
 ```
 ### Аутентификация
-```json
 POST /login
+```json
 {
   "username": "admin",
   "password": "secret"
