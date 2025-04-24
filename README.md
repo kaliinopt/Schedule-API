@@ -32,7 +32,7 @@
 ```bash
 pip install -r requirements.txt
 ```
-Создайте файл config.py и добавьте:
+2. Создайте файл config.py и добавьте:
 
 ```python
 SECRET_KEY = "your-secret-key"
@@ -43,12 +43,12 @@ DATABASE_LOGIN = "your-login"
 POSTGRES_SERVER = "localhost"  # или ваш IP
 POSTGRES_PORT = "5432"        # стандартный порт PostgreSQL
 ```
-Запустите сервер:
+3. Запустите сервер:
 
 ```bash
 uvicorn app.main:app --reload
 ```
-После запуска будет доступно:
+### После запуска будет доступно:
 
 API: http://localhost:8000
 
