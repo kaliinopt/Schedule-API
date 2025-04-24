@@ -6,6 +6,9 @@ from sqlalchemy import select, and_, or_
 from database import get_db
 from typing import List, Type
 from datetime import date, timedelta
+import logging
+
+loger = logging.getLogger("app")
 
 #Захардкодил по причине неизменности
 audience_models = {
@@ -162,5 +165,6 @@ async def delete_schedule(
     
     await db.delete(event)
     await db.commit()
+    loger.info(f"Была удалена запись с id: {event.id} из таблицы {model.__tablename__} с аккаунта {admin.username}")
     return {"message": "Успешно удалено"}
 
