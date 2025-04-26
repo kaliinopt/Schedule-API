@@ -1,7 +1,7 @@
-import models, schemas, oath2, utils
+from . import schemas, models, utils, oath2
 from fastapi import status, HTTPException, Depends, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
-from database import get_db
+from . import get_db
 from sqlalchemy import select
 
 

@@ -1,9 +1,9 @@
-import models, schemas, oath2
-from utils import check_time_conflicts, get_next_occurrence_by_week
+from . import models, schemas, oath2
+from . import check_time_conflicts, get_next_occurrence_by_week
 from fastapi import status, HTTPException, Depends, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_, or_
-from database import get_db
+from . import get_db
 from typing import List, Type
 from datetime import date, timedelta
 import logging

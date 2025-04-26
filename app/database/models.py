@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, Time, Date
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy.sql.expression import text
-from database import Base
+from .database import Base
+from .base_models import BaseClassRoom
 
 class User(Base):
     __tablename__ = 'users'
@@ -11,18 +12,6 @@ class User(Base):
     role = Column(String, nullable=False, default="user")
     created_at = Column(TIMESTAMP(timezone=True), 
                         nullable=False, server_default=text('now()'))
-
-# Базовый класс для всех аудиторий
-class BaseClassRoom(Base):
-    __abstract__ = True  # Указываем, что это абстрактный класс 
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    subject = Column(String, nullable=False)
-    teacher = Column(String, nullable=False)
-    start_time = Column(Time, nullable=False)
-    end_time = Column(Time, nullable=False)
-    date = Column(Date, nullable=False)
-    repeat_frequency = Column(String(50), nullable=True)
-    repeat_until = Column(Date, nullable=True)
 
 # Конкретные классы для каждой аудитории, аудитории не меняются
 class Class_142(BaseClassRoom):

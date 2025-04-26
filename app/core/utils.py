@@ -1,11 +1,11 @@
 from passlib.context import CryptContext
-from schemas import ScheduleCreate, ScheduleUpdate
+from app.api.schemas.schemas import ScheduleCreate
 from typing import Type
 from sqlalchemy.ext.asyncio import AsyncSession 
-from models import BaseClassRoom
-from fastapi import status, HTTPException
+from app.database.models import BaseClassRoom
+from fastapi import HTTPException
 from sqlalchemy import select, and_, or_
-from typing import Optional, Tuple, List
+from typing import Optional, List
 from datetime import date, timedelta, time
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated='auto')

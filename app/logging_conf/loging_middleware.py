@@ -1,6 +1,5 @@
 from fastapi import Request
 import logging
-from datetime import datetime
 
 logger = logging.getLogger("app")
 

@@ -1,9 +1,17 @@
 from fastapi import FastAPI, Request
-from routers import schedule, user, auth
-from logging_conf.loger import setup_logging
-from logging_conf.loging_middleware import log_requests
+from app.api.routers import schedule, user, auth
+from app.logging_conf.loger import setup_logging
+from app.logging_conf.loging_middleware import log_requests
+from app.core.config import load_config
 
 app = FastAPI()
+
+config = load_config()
+
+if config.DEBUG:
+    app.debug = True
+else:
+    app.debug = False
 
 setup_logging()
 

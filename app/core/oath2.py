@@ -1,16 +1,16 @@
 from jose import JWTError, jwt
-import tracemalloc
 from datetime import datetime, timedelta, timezone
-import models
+from app.database import models
 from fastapi import Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from database import get_db
-from config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+from app.database.database import get_db
+from . import load_config
 
-# Включаем tracemalloc для отслеживания выделения памяти
-tracemalloc.start()
+config = load_config()
+
+
 
 # Схема для аутентификации OAuth2
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
@@ -19,17 +19,17 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
 def create_access_token(data: dict):
     to_encode = data.copy()
 
-    expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now(timezone.utc) + timedelta(minutes=int(config.ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({"exp": expire})
 
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, config.SECRET_KEY, algorithm=config.ALGORITHM)
 
     return encoded_jwt
 
 # Функция для проверки токена и получения пользователя
 async def verify_access_token(token: str, credentials_exception, db: AsyncSession):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, config.SECRET_KEY, algorithms=[config.ALGORITHM])
 
         username: str = payload.get("username")
     
