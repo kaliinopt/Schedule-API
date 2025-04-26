@@ -32,16 +32,14 @@
 ```bash
 pip install -r requirements.txt
 ```
-2. Создайте файл config.py и добавьте:
+2. Создайте файл .env и добавьте:
 
-```python
-SECRET_KEY = "your-secret-key"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 часа
-DATABASE_PASSWORD = "your-password"
-DATABASE_LOGIN = "your-login"
-POSTGRES_SERVER = "localhost"  # или ваш IP
-POSTGRES_PORT = "5432"        # стандартный порт PostgreSQL
+```env
+SQLALCHEMY_DATABASE_URL=postgresql+asyncpg://{login}:{password}@{host}:{port}/{db_name}
+SECRET_KEY=your-secret-key
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+DEBUG=TRUE
 ```
 3. Запустите сервер:
 
