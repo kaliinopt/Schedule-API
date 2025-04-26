@@ -27,12 +27,16 @@
 ## 🚀 Запуск проекта
 
 ### Локальная разработка
-
-1. Установите зависимости:
+1. Клонируйте репозиторий:
+```bash
+git clone https://github.com/kaliinopt/Schedule-API.git
+cd Schedule-API
+```
+2. Установите зависимости:
 ```bash
 pip install -r requirements.txt
 ```
-2. Создайте файл .env и добавьте:
+3. Создайте файл .env и добавьте:
 
 ```env
 SQLALCHEMY_DATABASE_URL=postgresql+asyncpg://{login}:{password}@{host}:{port}/{db_name}
@@ -41,7 +45,7 @@ ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=60
 DEBUG=TRUE
 ```
-3. Запустите сервер:
+4. Запустите сервер:
 
 ```bash
 uvicorn app.main:app --reload
