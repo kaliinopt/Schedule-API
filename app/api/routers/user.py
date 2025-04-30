@@ -9,10 +9,10 @@ router = APIRouter(
     prefix="/users",
     tags=["Users"]
 )
-#Создание обычного пользователя, права есть только на просмотр, выпилю если не надо будет
+
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
 async def create_user(user: schemas.UserCreate, db: AsyncSession = Depends(get_db)):
-    
+    """Создание обычного пользователя, права есть только на просмотр"""
     result = await db.execute(select(models.User).where(models.User.username == user.username))
     existing_user = result.scalars().first()
     if existing_user:
@@ -35,12 +35,15 @@ async def create_user(user: schemas.UserCreate, db: AsyncSession = Depends(get_d
 
     return new_user
 
-#Создание новых админов
+
 @router.post("/admin", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
 async def create_admin(
     admin: schemas.UserCreate, 
     db: AsyncSession = Depends(get_db),
     current_admin: models.User = Depends(oath2.require_role("admin"))):
+    """Создание новых админов, эндпоинт защищен от обычных пользователей, 
+    рекомендуется создать админа сразу в базе данных"""
+
     result = await db.execute(select(models.User).where(models.User.username == admin.username))
     existing_user = result.scalars().first()
     if existing_user:
@@ -61,10 +64,9 @@ async def create_admin(
 
     return new_user
 
-#Получение пользователя по id
 @router.get('/{id}', response_model=schemas.UserOut)
 async def get_user(id: int, db: AsyncSession = Depends(get_db)):
-
+    """Получения пользователя по id, не факт, что может понадобиться"""
     result = await db.execute(select(models.User).where(models.User.id == id))
     user = result.scalars().first()
 

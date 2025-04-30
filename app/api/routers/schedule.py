@@ -10,7 +10,7 @@ import logging
 
 loger = logging.getLogger("app")
 
-#Захардкодил по причине неизменности
+#Захардкодил по причине неизменности аудиторий
 audience_models = {
             142: models.Class_142, 
             143: models.Class_143, 
@@ -37,25 +37,25 @@ async def get_audience_model(audience_id: int):
         raise HTTPException(status_code=404, detail="Аудитория не найдена")
     return model
 
-# Получение расписания на день, удалю если не понадобиться, 
+
 @router.get("/{audience_id}/{date}", response_model=List[schemas.ScheduleResponse])
 async def get_schedule_for_date(
     date: date,
     model: Type[models.BaseClassRoom] = Depends(get_audience_model),
     db: AsyncSession = Depends(get_db)):
-    
+    """Получение расписания на день, удалю если не понадобиться"""
     schedule = await db.execute(
         select(model).where(model.date == date)
     )
     
     return schedule.scalars().all()
 
-#Получение расписания на неделю 
 @router.get("/{audience_id}/week/{start_date}", response_model=List[schemas.ScheduleResponse])
 async def get_week_schedule(
     start_date: date,
     model: Type[models.BaseClassRoom] = Depends(get_audience_model),
     db: AsyncSession = Depends(get_db)):
+    """Получение расписания на неделю"""
 
     end_date = start_date + timedelta(days=6)
     
@@ -114,6 +114,7 @@ async def create_schedule(
     schedule: schemas.ScheduleCreate,
     db: AsyncSession = Depends(get_db), 
     admin: models.User = Depends(oath2.require_role("admin"))):
+    """Создание расписания"""
 
     model = audience_models.get(schedule.audience_id)
     if not model:
@@ -135,6 +136,7 @@ async def update_schedule(
     model: Type[models.BaseClassRoom] = Depends(get_audience_model),
     db: AsyncSession = Depends(get_db), 
     admin: models.User = Depends(oath2.require_role("admin"))):
+    """Обновление конкретного события"""
     
     event = await db.get(model, id)
     if not event:
@@ -157,6 +159,7 @@ async def delete_schedule(
     model: Type[models.BaseClassRoom] = Depends(get_audience_model),
     db: AsyncSession = Depends(get_db), 
     admin: models.User = Depends(oath2.require_role("admin"))):
+    """Удаление конкретного события"""
     
     event = await db.get(model, id)
 

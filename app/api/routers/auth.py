@@ -13,7 +13,7 @@ router = APIRouter(tags=['Authentication'])
 
 @router.post('/login')
 async def login(request: Request, user_credentials: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
-
+    """Аутентификация пользователей"""
     result = await db.execute(select(models.User).where(models.User.username == user_credentials.username))
     user = result.scalars().first()
 
