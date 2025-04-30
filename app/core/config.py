@@ -23,4 +23,3 @@ def load_config(path: str = None) -> Config:
     )
 
 config = load_config()
-print(config.ALGORITHM)
