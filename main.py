@@ -3,8 +3,13 @@ from app.api.routers import schedule, user, auth
 from app.logging_conf.loger import setup_logging
 from app.logging_conf.loging_middleware import log_requests
 from app.core.config import load_config
+import logfire
+
+logfire.configure()
 
 app = FastAPI()
+
+logfire.instrument_fastapi(app)
 
 config = load_config()
 
@@ -15,9 +20,10 @@ else:
 
 setup_logging()
 
-@app.middleware("http")
-async def loging_middelware(request: Request, call_next):
-    return await log_requests(request, call_next)
+if config.ENABLE_LOGGING_MIDDLEWARE:
+    @app.middleware("http")
+    async def loging_middelware(request: Request, call_next):
+        return await log_requests(request, call_next)
 
 #Проверка статуса
 @app.get("/")
