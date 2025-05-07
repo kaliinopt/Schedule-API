@@ -106,7 +106,6 @@ POST /api/schedule
     "end_time": "22:00:00",
     "repeat_frequency": null, 
     "repeat_until": null, 
-    "id": 15,
     "date": "2025-08-09"
 }
 ```
