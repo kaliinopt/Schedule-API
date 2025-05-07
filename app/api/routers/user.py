@@ -71,6 +71,6 @@ async def get_user(id: int, db: AsyncSession = Depends(get_db)):
     user = result.scalars().first()
 
     if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'user with id: {id} does not exist')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Пользователь с id: {id} не существует')
     
     return user

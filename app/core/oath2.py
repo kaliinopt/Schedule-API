@@ -51,7 +51,7 @@ async def get_current_user(
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail='Could not validate credentials',
+        detail='Не смог обработать данные',
         headers={"WWW-Authenticate": "Bearer"}
     )
     
@@ -63,7 +63,7 @@ def require_role(role: str):
         if current_user.role != role:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Permission denied"
+                detail="Отказано в доступе"
             )
         return current_user
     return role_checker

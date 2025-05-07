@@ -1,61 +1,82 @@
+from typing import AsyncGenerator
 import pytest
-import pytest_asyncio
-from httpx import AsyncClient, ASGITransport
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from sqlalchemy.pool import NullPool
-from main import app
+from sqlalchemy import NullPool, insert
 from app.database.database import Base, get_db
+from main import app
 from app.core.config import load_config
-from app.database.models import User
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.orm import sessionmaker
+import pytest_asyncio
+from httpx import ASGITransport, AsyncClient
+from app.core.utils import hash
 
-# Загрузка конфигурации
-config = load_config()
+Config = load_config()
 
-@pytest_asyncio.fixture(scope="session")
+DB_URL = Config.TEST_DATABASE_URL
+
+test_engine = create_async_engine(
+        url=DB_URL,
+        echo=False,
+        poolclass=NullPool,
+        connect_args={"command_timeout": 5}
+    )
+    
+
+@pytest.fixture(scope="session")
 def event_loop():
+    """Переопределяем event loop для pytest-asyncio"""
     import asyncio
-    loop = asyncio.get_event_loop_policy().new_event_loop()
+    policy = asyncio.get_event_loop_policy()
+    loop = policy.new_event_loop()
     yield loop
     loop.close()
 
-@pytest_asyncio.fixture(scope="session")
-async def engine():
-    engine = create_async_engine(
-        config.TEST_DATABASE_URL,
-        echo=False,
-        poolclass=NullPool,
-        connect_args={"command_timeout": 3}
-    )
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    yield engine
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-    await engine.dispose()
 
-@pytest_asyncio.fixture
-async def db_session(engine):
-    async with async_sessionmaker(
-        engine,
-        expire_on_commit=False,
-        autoflush=False
-    )() as session:
-        async with session.begin():
+#create a session to override the default db session
+async def test_get_session() -> AsyncGenerator[AsyncSession, None]:
+    Session = sessionmaker(class_=AsyncSession, expire_on_commit=False)
+    try:
+        async with Session(bind=test_engine) as session:
             yield session
+    finally:
+        await session.close()
+        
+@pytest_asyncio.fixture(scope='function')
+async def client():
+    async with test_engine.begin() as conn:
+        from app.database.models import User
+        await conn.run_sync(Base.metadata.create_all)
 
-@pytest_asyncio.fixture
-async def client(db_session):
-    async def override_get_db():
-            yield db_session
-
-    app.dependency_overrides[get_db] = override_get_db
+    # override the session
+    app.dependency_overrides[get_db] = test_get_session
     
-    async with AsyncClient(
-        transport=ASGITransport(app=app),
-        base_url="http://test",
-        timeout=3.0,
-        follow_redirects=True
-    ) as client:
+    async with AsyncClient(timeout=5, transport=ASGITransport(app=app), base_url="https://test") as client:
         yield client
+
+
+
+@pytest_asyncio.fixture(scope='session')
+async def create_test_admin():
+    """Фикстура создаёт тестового админа один раз перед всеми тестами."""
+    admin_data = {
+        "username": "test_admin",
+        "password": hash("adminpass123"),
+        "role": "admin",
+    }
     
+    # Вставляем админа напрямую в БД
+    from app.database.models import User
+    stmt = insert(User).values(**admin_data)
+    async with test_engine.begin() as conn:
+        await conn.execute(stmt)
+        await conn.commit()
+
+
+@pytest_asyncio.fixture(scope='function')
+async def close_():
+    async with test_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
     app.dependency_overrides.clear()
+
+

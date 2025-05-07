@@ -1,7 +1,5 @@
 import pytest
 from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.database.models import User
 
 BASE_URL = "/users/"
 
@@ -31,7 +29,8 @@ async def test_create_user(
 
 @pytest.mark.asyncio
 async def test_create_user_incorrect(
-    client: AsyncClient
+    client: AsyncClient,
+    close_
 ):
     # 1. Подготовка тестовых данных
     test_data = {
