@@ -14,8 +14,6 @@ app = FastAPI(debug=config.DEBUG)
 
 logfire.instrument_fastapi(app)
 
-config = load_config()
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -27,7 +25,6 @@ app.add_middleware(
     allow_credentials=True,
     max_age=86400,  # Кешировать CORS-правила на 24 часа
 )
-
 
 setup_logging()
 
