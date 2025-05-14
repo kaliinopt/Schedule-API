@@ -30,6 +30,19 @@ async def test_get_week_schedule(
     assert response.json() == []
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("audience_id", audience_ids)
+async def test_get_week_schedule_incorrect_date(
+    client: AsyncClient,
+    audience_id: int
+):
+    #Проверка статуса и ответа
+
+    response = await client.get(
+        f"{BASE_URL}{audience_id}/week/2025-04-0"
+    )
+    assert response.status_code == 422
+
+@pytest.mark.asyncio
 async def test_create_schedule_not_admin(client: AsyncClient):
     login_responce = await client.post(
         "/login",
@@ -53,7 +66,7 @@ async def test_create_schedule_not_admin(client: AsyncClient):
 @pytest.mark.asyncio
 async def test_admin_can_create_schedule(client: AsyncClient, create_test_admin):
     # Логинимся как админ
-    login_res = await client.post(""
+    login_res = await client.post(
     "/login", 
     data={
         "username": "test_admin", 
@@ -69,3 +82,45 @@ async def test_admin_can_create_schedule(client: AsyncClient, create_test_admin)
         headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 201
+
+@pytest.mark.asyncio
+async def test_update_schedule(client: AsyncClient, create_test_admin):
+    # Логинимся как админ
+    login_res = await client.post(
+    "/login", 
+    data={
+        "username": "test_admin", 
+        "password": "adminpass123"
+        })
+    
+    token = login_res.json()["access_token"]
+    
+    # Тест редактирования расписания
+    response = await client.put(
+        f"{BASE_URL}251/1",
+        json=some_json_test,
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    assert response.status_code == 200
+    assert "id" in response.json()
+
+@pytest.mark.asyncio
+async def test_update_schedule_incorrect(client: AsyncClient, create_test_admin):
+    # Логинимся как админ
+    login_res = await client.post(
+    "/login", 
+    data={
+        "username": "test_admin", 
+        "password": "adminpass123"
+        })
+    
+    token = login_res.json()["access_token"]
+    
+    # Тест редактирования расписания
+    response = await client.put(
+        f"{BASE_URL}2511/1",
+        json=some_json_test,
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    assert response.status_code == 404
+
