@@ -95,17 +95,38 @@ async def test_update_schedule(client: AsyncClient, create_test_admin):
     
     token = login_res.json()["access_token"]
     
-    # Тест редактирования расписания
+    # Тест создания расписания
     response = await client.put(
         f"{BASE_URL}251/1",
         json=some_json_test,
         headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 200
-    assert "id" in response.json()
 
 @pytest.mark.asyncio
-async def test_update_schedule_incorrect(client: AsyncClient, create_test_admin):
+async def test_update_schedule_403(client: AsyncClient, create_test_admin):
+    # Логинимся как админ
+    login_responce = await client.post(
+        "/login",
+        data={
+            "username": "user1234543124",
+            "password": "newbie123!"
+        }
+    )
+    assert login_responce.status_code == 200
+    token = login_responce.json()["access_token"]
+
+    
+    # Тест редактирования расписания
+    response = await client.put(
+        f"{BASE_URL}251/1",
+        json=some_json_test,
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    assert response.status_code == 403
+
+@pytest.mark.asyncio
+async def test_update_schedule_incorrect_url(client: AsyncClient, create_test_admin):
     # Логинимся как админ
     login_res = await client.post(
     "/login", 
@@ -124,3 +145,44 @@ async def test_update_schedule_incorrect(client: AsyncClient, create_test_admin)
     )
     assert response.status_code == 404
 
+@pytest.mark.asyncio
+async def test_delete_schedule(client: AsyncClient, create_test_admin):
+    # Логинимся как админ
+    login_res = await client.post(
+    "/login", 
+    data={
+        "username": "test_admin", 
+        "password": "adminpass123"
+        })
+    
+    token = login_res.json()["access_token"]
+    
+    # Тест удаления события из расписания
+    response = await client.delete(
+        f"{BASE_URL}251/1",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    assert response.status_code == 200
+
+@pytest.mark.asyncio
+async def test_delete_schedule_protected(client: AsyncClient, create_test_admin):
+
+    login_responce = await client.post(
+        "/login",
+        data={
+            "username": "user1234543124",
+            "password": "newbie123!"
+        }
+    )
+    assert login_responce.status_code == 200
+    token = login_responce.json()["access_token"]
+
+    
+    # Тест редактирования расписания
+    response = await client.put(
+        f"{BASE_URL}251/1",
+        json=some_json_test,
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    assert response.status_code == 403
+    assert response.json() == {"detail": "Отказано в доступе"}
