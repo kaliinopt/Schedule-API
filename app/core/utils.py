@@ -183,7 +183,7 @@ async def check_recurring_conflicts(
                         detail=f"Пересечение с повторяющимся событием (ID: {event.id}, дата: {event_date})"
                     )
 
-# Обновленная функция check_time_conflicts
+#Проверка на конфликты времени
 async def check_time_conflicts(
     db: AsyncSession, 
     model: Type[BaseClassRoom], 
