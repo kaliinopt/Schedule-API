@@ -53,9 +53,3 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[str]
-
-@field_validator('start_time', 'end_time')
-def validate_time_format(cls, v):
-    if v.hour > 23 or v.minute > 59 or v.second > 59:
-        raise ValueError("Некорректное время")
-    return v
