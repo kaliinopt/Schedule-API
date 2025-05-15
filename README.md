@@ -43,6 +43,7 @@ SQLALCHEMY_DATABASE_URL=postgresql+asyncpg://{login}:{password}@{host}:{port}/{d
 SECRET_KEY=your-secret-key
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=60
+ENABLE_LOGGING_MIDDLEWARE=TRUE
 DEBUG=TRUE
 ```
 4. Запустите сервер:
