@@ -1,5 +1,3 @@
-import pytest
-from httpx import AsyncClient
 from app.core.utils import check_time_overlap, calculate_recurring_dates
 from datetime import date
 
