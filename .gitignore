@@ -1,0 +1,9 @@
+.venv/
+.env
+.dockerignore 
+__pycache__
+logs
+*.crt
+*.key
+.pytest_cache
+.logfire
